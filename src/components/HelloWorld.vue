@@ -1,10 +1,13 @@
 <template>
   <div class="hello">
     <div id="joint" style="width: 100%; height: 500px; overflow: scroll;"></div>
+    <div id="attributes"></div>
   </div>
 </template>
 
 <script>
+import $ from 'jquery';
+
 export default {
   name: 'HelloWorld',
   data() {
@@ -12,13 +15,13 @@ export default {
       graph: new window.joint.dia.Graph,
       paper: null,
       graphData: {
-        "ds3": ["union1"],
-        "ds1": ["merge1"],
-        "ds2": ["translate1"],
-        "translate1": ["merge1"],
-        "merge1": ["filter1"],
-        "filter1": ["union1"],
-        "union1": ["output1"]
+        "ds3": {"next": "union1", "props": []},
+        "ds1": {"next": "merge1", "props": []},
+        "ds2": {"next": "translate1", "props": []},
+        "translate1": {"next": "merge1", "props": []},
+        "merge1": {"next": "filter1", "props": []},
+        "filter1": {"next": "union1", "props": []},
+        "union1": {"next": "output1", "props": []}
       }
     }
   },
@@ -91,9 +94,9 @@ export default {
       background: {
           color: 'rgba(225, 225, 225, 0.9)'
       },
-      defaultLink: new window.joint.dia.Link({
-        attrs: { '.marker-target': { d: 'M 10 0 L 0 5 L 10 10 z' } }
-      }),
+      // defaultLink: new window.joint.dia.Link({
+      //   attrs: { '.marker-target': { d: 'M 10 0 L 0 5 L 10 10 z' } }
+      // }),
     });
     this.draw();
     this.paper.on('blank:pointerdblclick', function(eventObject, eventX, eventY) {
@@ -120,6 +123,9 @@ export default {
         target: { x: x + 100, y: y + 100 }
       });
       link.addTo(this.model);
+      let attributes = $('#attributes');
+      attributes.delegate('button', 'click', () => $('#attrs').hide());
+      attributes.empty().append('<div id="attrs"><input type=text><button>update</button></div>');
     });
   },
   props: {
